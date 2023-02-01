@@ -15,6 +15,7 @@
 package com.google.mediapipe.examples.hands;
 
 import android.opengl.GLES20;
+import android.util.Log;
 
 import com.google.mediapipe.formats.proto.LandmarkProto;
 import com.google.mediapipe.formats.proto.LandmarkProto.Landmark;
@@ -32,6 +33,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -102,12 +104,36 @@ public class HandsResultGlRenderer implements ResultGlRenderer<HandsResult> {
 
         int numHands = result.multiHandLandmarks().size();
         List<LandmarkList> landmarks = result.multiHandWorldLandmarks();
+        LandmarkProto.NormalizedLandmarkList normalizedLandmarks;
+        List<HandPoints> relPoints = new ArrayList<HandPoints>();
+        relPoints.add(HandPoints.INDEX_LOWER);
+        relPoints.add(HandPoints.INDEX_UPPER);
+
         for (int i = 0; i < numHands; ++i) {
+            normalizedLandmarks = result.multiHandLandmarks().get(0);
             boolean isLeftHand = result.multiHandedness().get(i).getLabel().equals("Left");
+            drawVectorUtils(normalizedLandmarks.getLandmark(HandPoints.INDEX_TIP.getValue()),
+                    normalizedLandmarks.getLandmark(HandPoints.INDEX_BASE.getValue()),
+                    isLeftHand ? LEFT_HAND_CONNECTION_COLOR : RIGHT_HAND_CONNECTION_COLOR);
+
+            //for (int j = HandPoints.INDEX_BASE.getValue(); j <= HandPoints.INDEX_TIP.getValue(); j++) {
+            //    Log.d("DRAWING", "Drawing landmark " + j);
+            //    drawVectorUtils(normalizedLandmarks.getLandmark(i),
+            //            normalizedLandmarks.getLandmark(i + 1),
+            //            isLeftHand ? LEFT_HAND_CONNECTION_COLOR : RIGHT_HAND_CONNECTION_COLOR);
+            //}
+            drawVectorUtils(normalizedLandmarks.getLandmark(HandPoints.INDEX_BASE.getValue()),
+                    normalizedLandmarks.getLandmark(HandPoints.INDEX_LOWER.getValue()),
+                    isLeftHand ? LEFT_HAND_CONNECTION_COLOR : RIGHT_HAND_CONNECTION_COLOR);
+
             drawConnections(
                     result.multiHandLandmarks().get(i).getLandmarkList(),
                     isLeftHand ? LEFT_HAND_CONNECTION_COLOR : RIGHT_HAND_CONNECTION_COLOR);
             for (NormalizedLandmark landmark : result.multiHandLandmarks().get(i).getLandmarkList()) {
+                int index = result.multiHandLandmarks().get(i).getLandmarkList().indexOf(landmark);
+                if (index != 5 && index != 6 && index !=  7 && index !=  8) {
+                    continue;
+                }
                 // Draws the landmark.
                 drawCircle(
                         landmark.getX(),
@@ -121,15 +147,14 @@ public class HandsResultGlRenderer implements ResultGlRenderer<HandsResult> {
             }
 
             log = "";
-
-            int numeroLivelli = 70;
-            LandmarkList landmarksFirstHand = landmarks.get(0);
-            LandmarkProto.NormalizedLandmarkList landmarksFirstHandNormal = result.multiHandLandmarks().get(0);
-            log = "\n" + HandPoints.THUMB_TIP + ": " + Utils.fingerLevelsToWrist(numeroLivelli, landmarksFirstHand).get(HandPoints.THUMB_TIP);
-            log += "\n" + HandPoints.INDEX_TIP + ": " + Utils.fingerLevelsToWrist(numeroLivelli, landmarksFirstHand).get(HandPoints.INDEX_TIP);
-            log += "\n" + HandPoints.MIDDLE_TIP + ": " + Utils.fingerLevelsToWrist(numeroLivelli, landmarksFirstHand).get(HandPoints.MIDDLE_TIP);
-            log += "\n" + HandPoints.RING_TIP + ": " + Utils.fingerLevelsToWrist(numeroLivelli, landmarksFirstHand).get(HandPoints.RING_TIP);
-            log += "\n" + HandPoints.PINKY_TIP + ": " + Utils.fingerLevelsToWrist(numeroLivelli, landmarksFirstHand).get(HandPoints.PINKY_TIP);
+            //int numeroLivelli = 70;
+            //LandmarkList landmarksFirstHand = landmarks.get(0);
+            //LandmarkProto.NormalizedLandmarkList landmarksFirstHandNormal = result.multiHandLandmarks().get(0);
+            //log = "\n" + HandPoints.THUMB_TIP + ": " + Utils.fingerLevelsToWrist(numeroLivelli, landmarksFirstHand).get(HandPoints.THUMB_TIP);
+            //log += "\n" + HandPoints.INDEX_TIP + ": " + Utils.fingerLevelsToWrist(numeroLivelli, landmarksFirstHand).get(HandPoints.INDEX_TIP);
+            //log += "\n" + HandPoints.MIDDLE_TIP + ": " + Utils.fingerLevelsToWrist(numeroLivelli, landmarksFirstHand).get(HandPoints.MIDDLE_TIP);
+            //log += "\n" + HandPoints.RING_TIP + ": " + Utils.fingerLevelsToWrist(numeroLivelli, landmarksFirstHand).get(HandPoints.RING_TIP);
+            //log += "\n" + HandPoints.PINKY_TIP + ": " + Utils.fingerLevelsToWrist(numeroLivelli, landmarksFirstHand).get(HandPoints.PINKY_TIP);
             ////add all fingers UPPER to log message
             //log += "\n\n" + HandPoints.THUMB_UPPER + ": " + Utils.fingerLevelsToWrist(numeroLivelli, landmarksFirstHand).get(HandPoints.THUMB_UPPER);
             //log += "\n" + HandPoints.INDEX_UPPER + ": " + Utils.fingerLevelsToWrist(numeroLivelli, landmarksFirstHand).get(HandPoints.INDEX_UPPER);
@@ -137,29 +162,29 @@ public class HandsResultGlRenderer implements ResultGlRenderer<HandsResult> {
             //log += "\n" + HandPoints.RING_UPPER + ": " + Utils.fingerLevelsToWrist(numeroLivelli, landmarksFirstHand).get(HandPoints.RING_UPPER);
             //log += "\n" + HandPoints.PINKY_UPPER + ": " + Utils.fingerLevelsToWrist(numeroLivelli, landmarksFirstHand).get(HandPoints.PINKY_UPPER);
 
-            log += "\n\nWITH LANDMARKS";
-            log += "\n" + HandPoints.THUMB_LOWER + "_ERROR: " + VectorUtils.levelsToLine(Constants.NUMERO_LIVELLI,
-                    landmarksFirstHand.getLandmark(HandPoints.THUMB_BASE.getValue()),
-                    landmarksFirstHand.getLandmark(HandPoints.THUMB_LOWER.getValue()),
-                    landmarksFirstHand.getLandmark(HandPoints.THUMB_BASE.getValue()),
-                    landmarksFirstHand.getLandmark(HandPoints.THUMB_TIP.getValue()));
-            log += "\n" + HandPoints.THUMB_UPPER + "_ERROR: " + VectorUtils.levelsToLine(Constants.NUMERO_LIVELLI,
-                    landmarksFirstHand.getLandmark(HandPoints.THUMB_LOWER.getValue()),
-                    landmarksFirstHand.getLandmark(HandPoints.THUMB_UPPER.getValue()),
-                    landmarksFirstHand.getLandmark(HandPoints.THUMB_BASE.getValue()),
-                    landmarksFirstHand.getLandmark(HandPoints.THUMB_TIP.getValue()));
-
-            log += "\n\nWITH NORMALIZED LANDMARKS";
-            log += "\n" + HandPoints.INDEX_LOWER + "_ERROR: " + VectorUtils.levelsToLine(Constants.NUMERO_LIVELLI,
-                    landmarksFirstHandNormal.getLandmark(HandPoints.INDEX_BASE.getValue()),
-                    landmarksFirstHandNormal.getLandmark(HandPoints.INDEX_LOWER.getValue()),
-                    landmarksFirstHandNormal.getLandmark(HandPoints.INDEX_BASE.getValue()),
-                    landmarksFirstHandNormal.getLandmark(HandPoints.INDEX_TIP.getValue()));
-            log += "\n" + HandPoints.INDEX_UPPER + "_ERROR: " + VectorUtils.levelsToLine(Constants.NUMERO_LIVELLI,
-                    landmarksFirstHandNormal.getLandmark(HandPoints.INDEX_LOWER.getValue()),
-                    landmarksFirstHandNormal.getLandmark(HandPoints.INDEX_UPPER.getValue()),
-                    landmarksFirstHandNormal.getLandmark(HandPoints.INDEX_BASE.getValue()),
-                    landmarksFirstHandNormal.getLandmark(HandPoints.INDEX_TIP.getValue()));
+            //log += "\n\nWITH LANDMARKS";
+            //log += "\n" + HandPoints.THUMB_LOWER + "_ERROR: " + VectorUtils.levelsToLine(Constants.NUMERO_LIVELLI,
+            //        landmarksFirstHand.getLandmark(HandPoints.THUMB_BASE.getValue()),
+            //        landmarksFirstHand.getLandmark(HandPoints.THUMB_LOWER.getValue()),
+            //        landmarksFirstHand.getLandmark(HandPoints.THUMB_BASE.getValue()),
+            //        landmarksFirstHand.getLandmark(HandPoints.THUMB_TIP.getValue()));
+            //log += "\n" + HandPoints.THUMB_UPPER + "_ERROR: " + VectorUtils.levelsToLine(Constants.NUMERO_LIVELLI,
+            //        landmarksFirstHand.getLandmark(HandPoints.THUMB_LOWER.getValue()),
+            //        landmarksFirstHand.getLandmark(HandPoints.THUMB_UPPER.getValue()),
+            //        landmarksFirstHand.getLandmark(HandPoints.THUMB_BASE.getValue()),
+            //        landmarksFirstHand.getLandmark(HandPoints.THUMB_TIP.getValue()));
+            //
+            //log += "\n\nWITH NORMALIZED LANDMARKS";
+            //log += "\n" + HandPoints.INDEX_LOWER + "_ERROR: " + VectorUtils.levelsToLine(Constants.NUMERO_LIVELLI,
+            //        landmarksFirstHandNormal.getLandmark(HandPoints.INDEX_BASE.getValue()),
+            //        landmarksFirstHandNormal.getLandmark(HandPoints.INDEX_LOWER.getValue()),
+            //        landmarksFirstHandNormal.getLandmark(HandPoints.INDEX_BASE.getValue()),
+            //        landmarksFirstHandNormal.getLandmark(HandPoints.INDEX_TIP.getValue()));
+            //log += "\n" + HandPoints.INDEX_UPPER + "_ERROR: " + VectorUtils.levelsToLine(Constants.NUMERO_LIVELLI,
+            //        landmarksFirstHandNormal.getLandmark(HandPoints.INDEX_LOWER.getValue()),
+            //        landmarksFirstHandNormal.getLandmark(HandPoints.INDEX_UPPER.getValue()),
+            //        landmarksFirstHandNormal.getLandmark(HandPoints.INDEX_BASE.getValue()),
+            //        landmarksFirstHandNormal.getLandmark(HandPoints.INDEX_TIP.getValue()));
 
             //log += "\n\nINDEX_TIP -> INDEX_BASE" + Utils.getDistanceLevel(Constants.NUMERO_LIVELLI,
             //        landmarksFirstHand.getLandmark(HandPoints.INDEX_BASE.getValue()),
@@ -181,18 +206,34 @@ public class HandsResultGlRenderer implements ResultGlRenderer<HandsResult> {
             //log += "\n" + HandPoints.RING_TIP + ":       "+ df.format(landmarkList.get(16).getX()) + "   " + df.format(landmarkList.get(16).getY());
             //log += "\n" + HandPoints.PINKY_TIP + ":     "+ df.format(landmarkList.get(20).getX()) + "   " + df.format(landmarkList.get(20).getY());
             //add all fingers UPPER to log message
-            /*
-            log += "\n\n" + HandPoints.THUMB_UPPER + ": "+ Utils.fingerLevelsToWrist(numeroLivelli,landmarks.get(0)).get(HandPoints.THUMB_UPPER);
-            log += "\n" + HandPoints.INDEX_UPPER + ": "+ Utils.fingerLevelsToWrist(numeroLivelli,landmarks.get(0)).get(HandPoints.INDEX_UPPER);
-            log += "\n" + HandPoints.MIDDLE_UPPER + ": "+ Utils.fingerLevelsToWrist(numeroLivelli,landmarks.get(0)).get(HandPoints.MIDDLE_UPPER);
-            log += "\n" + HandPoints.RING_UPPER + ": "+ Utils.fingerLevelsToWrist(numeroLivelli,landmarks.get(0)).get(HandPoints.RING_UPPER);
-            log += "\n" + HandPoints.PINKY_UPPER + ": "+ Utils.fingerLevelsToWrist(numeroLivelli,landmarks.get(0)).get(HandPoints.PINKY_UPPER);
-            */
+
+            //log += "\n\n" + HandPoints.THUMB_UPPER + ": "+ Utils.fingerLevelsToWrist(numeroLivelli,landmarks.get(0)).get(HandPoints.THUMB_UPPER);
+            //log += "\n" + HandPoints.INDEX_UPPER + ": "+ Utils.fingerLevelsToWrist(numeroLivelli,landmarks.get(0)).get(HandPoints.INDEX_UPPER);
+            //log += "\n" + HandPoints.MIDDLE_UPPER + ": "+ Utils.fingerLevelsToWrist(numeroLivelli,landmarks.get(0)).get(HandPoints.MIDDLE_UPPER);
+            //log += "\n" + HandPoints.RING_UPPER + ": "+ Utils.fingerLevelsToWrist(numeroLivelli,landmarks.get(0)).get(HandPoints.RING_UPPER);
+            //log += "\n" + HandPoints.PINKY_UPPER + ": "+ Utils.fingerLevelsToWrist(numeroLivelli,landmarks.get(0)).get(HandPoints.PINKY_UPPER);
+
             //log += "\n\n";
+
+
 
 
         }
 
+    }
+
+    private void drawVectorUtils(NormalizedLandmark landmark1, NormalizedLandmark landmark2, float[] colorArray) {
+        GLES20.glUniform4fv(colorHandle, 1, colorArray, 0);
+        float[] vertex = {landmark1.getX(), landmark1.getY(), landmark2.getX(), landmark2.getY()};
+        FloatBuffer vertexBuffer =
+                ByteBuffer.allocateDirect(vertex.length * 4)
+                        .order(ByteOrder.nativeOrder())
+                        .asFloatBuffer()
+                        .put(vertex);
+        vertexBuffer.position(0);
+        GLES20.glEnableVertexAttribArray(positionHandle);
+        GLES20.glVertexAttribPointer(positionHandle, 2, GLES20.GL_FLOAT, false, 0, vertexBuffer);
+        GLES20.glDrawArrays(GLES20.GL_LINES, 0, 2);
     }
 
     //_____________________________________________________
@@ -231,6 +272,9 @@ public class HandsResultGlRenderer implements ResultGlRenderer<HandsResult> {
     private void drawConnections(List<NormalizedLandmark> handLandmarkList, float[] colorArray) {
         GLES20.glUniform4fv(colorHandle, 1, colorArray, 0);
         for (Hands.Connection c : Hands.HAND_CONNECTIONS) {
+            if (c.start() != 5 && c.start() != 6 && c.start() != 7 || c.end() == 9) {
+                continue;
+            }
             NormalizedLandmark start = handLandmarkList.get(c.start());
             NormalizedLandmark end = handLandmarkList.get(c.end());
             float[] vertex = {start.getX(), start.getY(), end.getX(), end.getY()};

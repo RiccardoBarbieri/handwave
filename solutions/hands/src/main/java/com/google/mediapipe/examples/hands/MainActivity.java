@@ -47,8 +47,8 @@ import com.hands.gesture.CrabGesture;
 import com.hands.gesture.FourGesture;
 import com.hands.gesture.PinchGesture;
 import com.hands.gesture.ScrollPageGesture;
-import com.hands.gesture.ThumbUpGesture;
 import com.hands.gesture.ThreeGesture;
+import com.hands.gesture.ThumbUpGesture;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
@@ -110,12 +110,12 @@ public class MainActivity extends AppCompatActivity {
         pdfFile = new File(getFilesDir(), documento);
         pdfFile1 = new File(getFilesDir(), documento1);
         pdfFile2 = new File(getFilesDir(), documento2);
-        if(!pdfFile.exists() && !pdfFile1.exists() && !pdfFile2.exists()){
+        if (!pdfFile.exists() && !pdfFile1.exists() && !pdfFile2.exists()) {
             //showToast("Il documento non esiste" + pdfFile.exists() + pdfFile1.exists() + pdfFile2.exists());
             creaPdf("documento.pdf");
             createPdf1("documento2.pdf");
             createPdf2("documento1.pdf");
-        }else{
+        } else {
 
         }
         creaPdf("documento.pdf");
@@ -375,16 +375,13 @@ public class MainActivity extends AppCompatActivity {
         gestureChecksLayout.setGravity(Gravity.BOTTOM | Gravity.RIGHT);
 
         //aggiungere TextView varie a gestureChecksLayout
-        gestureChecksLayout.addView(wristLog);
-        gestureChecksLayout.addView(thumbUp);
-        gestureChecksLayout.addView(pinch);
-        gestureChecksLayout.addView(crab);
-        gestureChecksLayout.addView(openHand);
-        gestureChecksLayout.addView(treHand);
-
+        //gestureChecksLayout.addView(wristLog);
         //gestureChecksLayout.addView(thumbUp);
         //gestureChecksLayout.addView(pinch);
-        gestureChecksLayout.addView(scroll);
+        //gestureChecksLayout.addView(crab);
+        //gestureChecksLayout.addView(openHand);
+        //gestureChecksLayout.addView(treHand);
+        //gestureChecksLayout.addView(scroll);
 
         this.inputSource = inputSource;
         // Initializes a new MediaPipe Hands solution instance in the streaming mode.
@@ -438,29 +435,29 @@ public class MainActivity extends AppCompatActivity {
                                 pinch.setTextColor(Color.RED);
                             }
 
-                            if (scrollGestureCheck==1) {
+                            if (scrollGestureCheck == 1) {
                                 scroll.setTextColor(Color.GREEN);
-                            } else if (scrollGestureCheck==2) {
+                            } else if (scrollGestureCheck == 2) {
                                 scroll.setTextColor(Color.YELLOW);
                             } else {
                                 scroll.setTextColor(Color.RED);
                             }
 
-                            if(crabGestureCheck){
+                            if (crabGestureCheck) {
                                 crab.setTextColor(Color.GREEN);
-                            }else{
+                            } else {
                                 crab.setTextColor(Color.RED);
                             }
 
-                            if(openHandCheck){
+                            if (openHandCheck) {
                                 openHand.setTextColor(Color.GREEN);
-                            }else{
+                            } else {
                                 openHand.setTextColor(Color.RED);
                             }
 
-                            if(threeHandCheck){
+                            if (threeHandCheck) {
                                 treHand.setTextColor(Color.GREEN);
-                            }else{
+                            } else {
                                 treHand.setTextColor(Color.RED);
                             }
                         }
@@ -550,12 +547,12 @@ public class MainActivity extends AppCompatActivity {
                         wristWorldLandmark.getX(), wristWorldLandmark.getY(), wristWorldLandmark.getZ()));
     }
 
-    private void creaPdf(String documento){
+    private void creaPdf(String documento) {
         pdfFile = new File(getFilesDir(), documento);
-        if(!pdfFile.exists()){
+        if (!pdfFile.exists()) {
             showToast("Il documento non esiste");
 
-        }else{
+        } else {
             showToast("Il documento esiste già");
         }
         Document document = new Document(PageSize.A4);
@@ -641,7 +638,7 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
-    private void createPdf2(String documento){
+    private void createPdf2(String documento) {
         pdfFile = new File(getFilesDir(), documento);
         Document document = new Document(PageSize.A4);
         try {
@@ -692,7 +689,8 @@ public class MainActivity extends AppCompatActivity {
             document.add(new Paragraph("Lincoln's death was a great loss to the nation, as he had become a symbol of unity and strength during one of the most difficult periods in American history. Lincoln's presidency, and his leadership during the Civil War, had a profound impact on the United States. He preserved the Union, abolished slavery, strengthened the federal government, and modernized the economy.\n"));
             document.add(new Paragraph("He also left a lasting legacy through his speeches and writings, which continue to be studied and admired to this day.\n"));
             document.add(new Paragraph("In conclusion, Abraham Lincoln was a great leader who guided the United States through its Civil War and changed the course of American history. His leadership, determination and unwavering commitment to preserving the Union and abolishing slavery, will be remembered forever. He is considered as one of the greatest president of the United States for his actions and speeches that are still studied and admired today.\n"));
-            document.newPage();document.add(new Paragraph("Abraham Lincoln was the 16th President of the United States, serving from March 1861 until his assassination in April 1865. Lincoln led the United States through its Civil War—its bloodiest war and perhaps its greatest moral, constitutional, and political crisis. In doing so, he preserved the Union, abolished slavery, strengthened the federal government, and modernized the economy.\n"));
+            document.newPage();
+            document.add(new Paragraph("Abraham Lincoln was the 16th President of the United States, serving from March 1861 until his assassination in April 1865. Lincoln led the United States through its Civil War—its bloodiest war and perhaps its greatest moral, constitutional, and political crisis. In doing so, he preserved the Union, abolished slavery, strengthened the federal government, and modernized the economy.\n"));
             document.add(new Paragraph("Born in Kentucky and raised in Indiana, Lincoln was primarily self-educated. He quickly rose to prominence as a Whig Party politician and as a lawyer. He served one term in the Illinois House of Representatives and was elected to the United States House of Representatives in 1846. In 1858, Lincoln ran for the United States Senate, but lost the race to Stephen A. Douglas. Lincoln's debates with Douglas during the campaign helped Lincoln become nationally known. Lincoln's speeches and debates, especially his \"House Divided\" speech, helped him gain the Republican Party nomination in 1860.\n"));
             document.add(new Paragraph("Lincoln's election in 1860 was the catalyst for the Southern states to secede from the Union, leading to the Civil War. Lincoln's primary goal as President was to preserve the Union, and he used all the powers of the presidency to do so. He issued the Emancipation Proclamation, which declared that all slaves in the Confederate states \"shall be then, thenceforward, and forever free.\" Lincoln also used his executive power to establish the first national draft, to increase the size of the army and navy, and to suspend the writ of habeas corpus, which allowed him to arrest and detain people without trial.\n"));
             document.add(new Paragraph("Despite Lincoln's efforts, the Civil War was a long and bloody conflict, with heavy casualties on both sides. Lincoln was criticized for his handling of the war and for his military strategy, but he remained steadfast in his determination to preserve the Union. In 1863, Lincoln delivered the Gettysburg Address, one of the most famous speeches in American history, in which he reaffirmed the principles of democracy and equality.\n\n\n"));
@@ -744,7 +742,7 @@ public class MainActivity extends AppCompatActivity {
         return;
     }
 
-    private void createPdf1(String documento){
+    private void createPdf1(String documento) {
         pdfFile = new File(getFilesDir(), documento);
         Document document = new Document(PageSize.A4);
         try {

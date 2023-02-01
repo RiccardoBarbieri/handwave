@@ -72,7 +72,6 @@ public class ScrollPageGesture implements IHandGesture {
             pollice.add(landmarkList.get(0).getLandmark(HandPoints.THUMB_TIP.getValue()));
             boolean checkPolliceStorto = !VectorUtils.checkInLineNormalized(pollice, errors);
 
-            Log.d("checkPolliceStorto", String.valueOf(checkPolliceStorto));
             return scorrimento(landmarkList.get(0).getLandmarkList(), errore) - (checkPolliceStorto ? 10 : 0);
         }
         return -1;

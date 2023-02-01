@@ -99,4 +99,12 @@ public class VectorUtils {
         return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
     }
 
+    public static double[] projectionOnLine(LandmarkProto.NormalizedLandmark landmark, LandmarkProto.NormalizedLandmark landmark1, LandmarkProto.NormalizedLandmark landmark2) {
+        double[] v1 = new double[]{landmark2.getX() - landmark1.getX(), landmark2.getY() - landmark1.getY(), landmark2.getZ() - landmark1.getZ()};
+        double[] v2 = new double[]{landmark.getX() - landmark1.getX(), landmark.getY() - landmark1.getY(), landmark.getZ() - landmark1.getZ()};
+        double scalar = dotProduct(v1, v2) / dotProduct(v1, v1);
+        double[] projection = new double[]{v1[0] * scalar, v1[1] * scalar, v1[2] * scalar};
+        return projection;
+    }
+
 }
